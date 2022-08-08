@@ -1,25 +1,43 @@
 class ParentClass
 {
-    //The "protected" keyword is a member access modifier.
-    //A protected member is accessible within its class and by derived class instances.
-    protected string myString = "Hello World";
+    protected virtual void FunctionOne() { Console.WriteLine("ParentClass.FunctionOne"); }
+    protected virtual void FunctionTwo() { Console.WriteLine("ParentClass.FunctionTwo"); }
 }
 
 class ChildClass : ParentClass
 {
+    sealed protected override void FunctionOne() { Console.WriteLine("ChildClass.FunctionOne"); }
+    protected override void FunctionTwo() { Console.WriteLine("ChildClass.FunctionTwo"); }
+}
+
+class AdditionalClass : ChildClass
+{
+    // Attempting to override FunctionOne causes compiler error CS0239. because FunctionOne is protected
+    // protected override void FunctionOne() { Console.WriteLine("AdditionalClass.FunctionOne"); }
+
+    // Overriding FunctionTwo is allowed.
+    protected override void FunctionTwo() { Console.WriteLine("Z.FunctionTwo"); }
+}
+
+
+//The Good Guy
+//the sealed modifier prevents other classes from inheriting from it
+
+sealed class SealedClass
+{
+    public int x;
+    public int y;
+}
+
+class SealedTest2
+{
     static void Main()
     {
-        var parentClass = new ParentClass();
-        var childClass = new ChildClass();
-        
-        /*
-            Error CS1540, because "myString" can only be accessed by classes derived from ParentClass.
-            parentClass.myString = "Hi World";
-        */
-
-        // Ok because this class derives from ParentClass.
-        childClass.myString = "Hi World";
-        Console.Write(childClass.myString);
+        //Sealed class can't inherit but can instanced. 
+        var sc = new SealedClass();
+        sc.x = 110;
+        sc.y = 150;
+        Console.WriteLine($"x = {sc.x}, y = {sc.y}");
     }
-    
 }
+// Output: x = 110, y = 150
